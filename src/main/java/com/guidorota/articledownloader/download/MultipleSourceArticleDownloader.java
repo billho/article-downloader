@@ -27,7 +27,7 @@ public final class MultipleSourceArticleDownloader {
     public Stream<Article> download(ArticleDetails details) {
         return articleDownloaders.stream()
                 .filter(dl -> dl.canDownloadFromUrl(details.getUrl()))
-                .map(dl -> dl.download(details));
+                .flatMap(dl -> dl.download(details));
     }
 
 }
