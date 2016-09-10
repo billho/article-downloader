@@ -22,8 +22,8 @@ public final class HuffingtonArticleDownloader implements ArticleDownloader {
         String articleUrl = details.getUrl();
         try {
             Document document = Jsoup.connect(articleUrl).get();
-            String text = TextExtractor.extractText(document.select("div.entry__body p"));
-            return Stream.of(new Article(details, text));
+            return TextExtractor.extractText(document.select("div.entry__body p"))
+                    .map(content -> new Article(details, content));
         } catch (Exception e) {
             return Stream.empty();
         }

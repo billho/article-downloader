@@ -22,8 +22,8 @@ public final class NyTimesArticleDownloader implements ArticleDownloader {
         String articleUrl = details.getUrl();
         try {
             Document document = Jsoup.connect(articleUrl).get();
-            String text = TextExtractor.extractText(document.select("p.story-body-text"));
-            return Stream.of(new Article(details, text));
+            return TextExtractor.extractText(document.select("p.story-body-text"))
+                    .map(content -> new Article(details, content));
         } catch (Exception e) {
             return Stream.empty();
         }

@@ -2,7 +2,7 @@ package com.guidorota.articledownloader;
 
 import com.guidorota.articledownloader.download.ArticleDetailsDownloader;
 import com.guidorota.articledownloader.download.MultipleSourceArticleDownloader;
-import com.guidorota.articledownloader.entity.ArticleDetails;
+import com.guidorota.articledownloader.entity.Article;
 import com.guidorota.articledownloader.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,12 +15,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class Runner {
+public class DownloadService {
 
     private static final List<String> feedUrls = Arrays.asList(
             "http://www.huffingtonpost.com/feeds/news.xml",
             "http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml",
-            "http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml"
+            "http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml",
+            "http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml",
+            "http://www.nytimes.com/services/xml/rss/nyt/World.xml"
     );
 
     private final ArticleDetailsDownloader articleDetailsDownloader;
@@ -28,7 +30,7 @@ public class Runner {
     private final ArticleRepository articleRepository;
 
     @Autowired
-    public Runner(
+    public DownloadService(
             ArticleDetailsDownloader articleDetailsDownloader,
             MultipleSourceArticleDownloader multipleSourceArticleDownloader,
             ArticleRepository articleRepository) {
@@ -37,14 +39,14 @@ public class Runner {
         this.articleRepository = articleRepository;
     }
 
-    public void run() {
-        feedUrls.stream()
+    public List<Article> run() {
+        return feedUrls.stream()
                 .flatMap(this::createUrl)
                 .flatMap(articleDetailsDownloader::getArticleDetails)
+                .parallel()
                 .filter(ad -> !articleRepository.containsUrl(ad.getUrl()))
                 .flatMap(multipleSourceArticleDownloader::download)
-                .forEach(System.out::println);
-//                .forEach(articleRepository::addArticle);
+                .collect(Collectors.toList());
     }
 
     private Stream<URL> createUrl(String url) {
