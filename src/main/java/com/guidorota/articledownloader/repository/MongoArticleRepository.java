@@ -41,8 +41,7 @@ public final class MongoArticleRepository implements ArticleRepository {
         Document bsonArticle = new Document()
                 .append("url", article.getUrl())
                 .append("title", article.getTitle())
-                .append("publishedDate", article.getPublishedDate())
-                .append("article", article.getArticle());
+                .append("article", article.getContent());
 
         db.getCollection("article").insertOne(bsonArticle);
     }

@@ -4,23 +4,21 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public final class TextExtractor {
 
     private TextExtractor() { }
 
-    public static Stream<String> extractText(Elements elements) {
-        String text = elements.stream()
+    public static String extractText(Element element) {
+        return element.text()
+                .replaceAll("[\n\r]", "");
+    }
+
+    public static String extractText(Elements elements) {
+        return elements.stream()
                 .map(Element::text)
                 .collect(Collectors.joining(" "))
                 .replaceAll("[\n\r]", "");
-
-        if (text == null || text.isEmpty()) {
-            return Stream.empty();
-        } else {
-            return Stream.of(text);
-        }
     }
 
 }

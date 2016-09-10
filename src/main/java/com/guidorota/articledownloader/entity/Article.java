@@ -1,31 +1,27 @@
 package com.guidorota.articledownloader.entity;
 
-import java.util.Date;
-
 public final class Article {
 
-    private final ArticleDetails articleDetails;
-    private final String article;
+    private final String url;
+    private final String title;
+    private final String content;
 
-    public Article(ArticleDetails articleDetails, String article) {
-        this.articleDetails = articleDetails;
-        this.article = article;
+    public Article(String url, String title, String content) {
+        this.url = url;
+        this.title = title;
+        this.content = content;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     public String getUrl() {
-        return articleDetails.getUrl();
+        return url;
     }
 
     public String getTitle() {
-        return articleDetails.getTitle();
-    }
-
-    public Date getPublishedDate() {
-        return articleDetails.getPublishedDate();
-    }
-
-    public String getArticle() {
-        return article;
+        return title;
     }
 
 }

@@ -1,14 +1,13 @@
 package com.guidorota.articledownloader;
 
-import com.guidorota.articledownloader.download.ArticleDetailsDownloader;
-import com.guidorota.articledownloader.download.MultipleSourceArticleDownloader;
+import com.guidorota.articledownloader.download.GenericArticleDownloader;
 import com.guidorota.articledownloader.entity.Article;
+import com.guidorota.articledownloader.entity.ArticleSource;
+import com.guidorota.articledownloader.entity.UrlSource;
 import com.guidorota.articledownloader.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,44 +16,39 @@ import java.util.stream.Stream;
 @Component
 public class DownloadService {
 
-    private static final List<String> feedUrls = Arrays.asList(
-            "http://www.huffingtonpost.com/feeds/news.xml",
-            "http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml",
-            "http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml",
-            "http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml",
-            "http://www.nytimes.com/services/xml/rss/nyt/World.xml"
+    private static final List<ArticleSource> articleSources = Arrays.asList(
+            new ArticleSource(
+                    new UrlSource(
+                            "http://www.huffingtonpost.com/feeds/news.xml",
+                            UrlSource.Type.RSS
+                    ),
+                    "h1.headline__title",
+                    "div.entry__body p"
+            )
+//            "http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+//            "http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml",
+//            "http://www.nytimes.com/services/xml/rss/nyt/InternationalHome.xml",
+//            "http://www.nytimes.com/services/xml/rss/nyt/World.xml"
     );
 
-    private final ArticleDetailsDownloader articleDetailsDownloader;
-    private final MultipleSourceArticleDownloader multipleSourceArticleDownloader;
     private final ArticleRepository articleRepository;
 
     @Autowired
-    public DownloadService(
-            ArticleDetailsDownloader articleDetailsDownloader,
-            MultipleSourceArticleDownloader multipleSourceArticleDownloader,
-            ArticleRepository articleRepository) {
-        this.articleDetailsDownloader = articleDetailsDownloader;
-        this.multipleSourceArticleDownloader = multipleSourceArticleDownloader;
+    public DownloadService(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
     }
 
     public List<Article> run() {
-        return feedUrls.stream()
-                .flatMap(this::createUrl)
-                .flatMap(articleDetailsDownloader::getArticleDetails)
-                .parallel()
-                .filter(ad -> !articleRepository.containsUrl(ad.getUrl()))
-                .flatMap(multipleSourceArticleDownloader::download)
+        return articleSources.parallelStream()
+                .map(GenericArticleDownloader::new)
+                .flatMap(this::downloadFromSingleSource)
                 .collect(Collectors.toList());
     }
 
-    private Stream<URL> createUrl(String url) {
-        try {
-            return Stream.of(new URL(url));
-        } catch (MalformedURLException e) {
-            return Stream.empty();
-        }
+    private Stream<Article> downloadFromSingleSource(GenericArticleDownloader downloader) {
+        return downloader.getUrls().parallel()
+                .filter(url -> !articleRepository.containsUrl(url))
+                .flatMap(downloader::download);
     }
 
 }
