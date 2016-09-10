@@ -1,6 +1,7 @@
 package com.guidorota.articledownloader.download;
 
 import com.guidorota.articledownloader.entity.Article;
+import com.guidorota.articledownloader.entity.ArticleDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,9 +13,8 @@ public final class HuffingtonArticleDownloader implements ArticleDownloader {
     }
 
     @Override
-    public Article download(String url) {
-        System.out.println("huffington");
-        return null;
+    public Article download(ArticleDetails details) {
+        return new Article(details, "huffington");
     }
 
 }

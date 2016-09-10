@@ -29,6 +29,8 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile('com.rometools:rome:1.7.0')
+	compile('org.mongodb:mongodb-driver:3.3.0')
+	compile('org.jsoup:jsoup:1.9.2')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

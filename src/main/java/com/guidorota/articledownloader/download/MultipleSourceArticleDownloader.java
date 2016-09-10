@@ -1,6 +1,7 @@
 package com.guidorota.articledownloader.download;
 
 import com.guidorota.articledownloader.entity.Article;
+import com.guidorota.articledownloader.entity.ArticleDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +24,10 @@ public final class MultipleSourceArticleDownloader {
         );
     }
 
-    public Stream<Article> download(String url) {
+    public Stream<Article> download(ArticleDetails details) {
         return articleDownloaders.stream()
-                .filter(dl -> dl.canDownloadFromUrl(url))
-                .map(dl -> dl.download(url));
+                .filter(dl -> dl.canDownloadFromUrl(details.getUrl()))
+                .map(dl -> dl.download(details));
     }
 
 }

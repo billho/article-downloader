@@ -26,9 +26,4 @@ public final class ArticleDetails {
         return title;
     }
 
-    @Override
-    public String toString() {
-        return url + " " + title;
-    }
-
 }
