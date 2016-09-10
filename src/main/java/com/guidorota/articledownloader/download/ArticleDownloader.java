@@ -1,4 +1,11 @@
 package com.guidorota.articledownloader.download;
 
-public final class ArticleDownloader {
+import com.guidorota.articledownloader.entity.Article;
+
+public interface ArticleDownloader {
+
+    boolean canDownloadFromUrl(String url);
+
+    Article download(String url);
+
 }
