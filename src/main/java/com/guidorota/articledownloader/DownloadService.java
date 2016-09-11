@@ -7,6 +7,8 @@ import com.guidorota.articledownloader.download.GenericFeedReader;
 import com.guidorota.articledownloader.entity.Article;
 import com.guidorota.articledownloader.entity.ArticleSource;
 import com.guidorota.articledownloader.repository.ArticleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,8 @@ import java.util.stream.Stream;
 
 @Component
 public final class DownloadService {
+
+    private static final Logger log = LoggerFactory.getLogger(DownloadService.class);
 
     private static final ExecutorService executor =
             Executors.newSingleThreadExecutor();
@@ -37,9 +41,11 @@ public final class DownloadService {
 
     public void downloadAndStore(List<ArticleSource> sources) {
         executor.submit(() -> {
+            log.info("Downloading and storing articles...");
             sources.parallelStream()
                     .flatMap(this::downloadIfNotInRepository)
                     .forEach(articleRepository::storeArticle);
+            log.info("Download complete");
         });
     }
 
