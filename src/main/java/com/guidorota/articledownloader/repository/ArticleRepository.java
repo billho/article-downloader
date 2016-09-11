@@ -6,6 +6,6 @@ public interface ArticleRepository {
 
     boolean containsUrl(String url);
 
-    void addArticle(Article article);
+    void storeArticle(Article article);
 
 }

@@ -39,7 +39,7 @@ public final class DownloadService {
         executor.submit(() -> {
             sources.parallelStream()
                     .flatMap(this::downloadIfNotInRepository)
-                    .forEach(articleRepository::addArticle);
+                    .forEach(articleRepository::storeArticle);
         });
     }
 

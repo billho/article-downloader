@@ -33,13 +33,14 @@ public final class MongoArticleRepository implements ArticleRepository {
     }
 
     @Override
-    public void addArticle(Article article) {
+    public void storeArticle(Article article) {
         if (containsUrl(article.getUrl())) {
             return;
         }
 
         Document bsonArticle = new Document()
                 .append("url", article.getUrl())
+                .append("downloadDate", article.getDownloadDate())
                 .append("title", article.getTitle())
                 .append("article", article.getContent());
 
