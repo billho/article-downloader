@@ -1,11 +1,11 @@
 package com.guidorota.articledownloader.entity;
 
-public final class UrlSource {
+public final class ArticleFeed {
 
     private final String url;
     private final Type type;
 
-    public UrlSource(String url, Type type) {
+    public ArticleFeed(String url, Type type) {
         this.url = url;
         this.type = type;
     }
@@ -18,7 +18,7 @@ public final class UrlSource {
         return type;
     }
 
-    public enum Type {
+    public static enum Type {
 
         RSS("rss");
 

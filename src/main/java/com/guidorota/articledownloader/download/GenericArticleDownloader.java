@@ -1,9 +1,8 @@
 package com.guidorota.articledownloader.download;
 
 import com.guidorota.articledownloader.entity.Article;
-import com.guidorota.articledownloader.entity.ArticleSource;
-import com.guidorota.articledownloader.entity.UrlSource;
-import com.guidorota.articledownloader.html.TextExtractor;
+import com.guidorota.articledownloader.entity.ArticleMapping;
+import com.guidorota.articledownloader.html.HtmlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,49 +15,22 @@ import java.util.stream.Stream;
 public final class GenericArticleDownloader implements ArticleDownloader {
 
     private static final Logger log = LoggerFactory.getLogger(GenericArticleDownloader.class);
-    private static final UrlProvider RSS_URL_PROVIDER = new RssUrlProvider();
-
-    private final ArticleSource articleSource;
-
-    public GenericArticleDownloader(ArticleSource articleSource) {
-        this.articleSource = articleSource;
-    }
 
     @Override
-    public Stream<String> getUrls() {
-        return articleSource.getUrlSources().stream()
-                .flatMap(this::getUrlsFromSource);
-    }
-
-    private Stream<String> getUrlsFromSource(UrlSource source) {
-        String sourceUrl = source.getUrl();
-        UrlSource.Type type = source.getType();
-
-        switch (source.getType()) {
-            case RSS:
-                return RSS_URL_PROVIDER.getArticleUrls(sourceUrl);
-            default:
-                String error = "Unknown provider type " + type;
-                log.error(error);
-                throw new RuntimeException(error);
-        }
-
-    }
-
-    @Override
-    public Stream<Article> download(String url) {
+    public Stream<Article> download(String url, ArticleMapping mapping) {
         try {
-            return extractFromUrl(url);
+            return extractFromUrl(url, mapping);
         } catch (Exception e) {
             return Stream.empty();
         }
     }
 
-    private Stream<Article> extractFromUrl(String url) throws IOException {
+    private Stream<Article> extractFromUrl(String url, ArticleMapping mapping)
+            throws IOException {
         Document document = Jsoup.connect(url).get();
 
-        String title = extractTitle(document);
-        String content = extractContent(document);
+        String title = extractTitle(document, mapping.getTitleSelector());
+        String content = extractContent(document, mapping.getContentSelector());
 
         if (stringIsEmpty(title) || stringIsEmpty(content)) {
             return Stream.empty();
@@ -71,15 +43,13 @@ public final class GenericArticleDownloader implements ArticleDownloader {
         }
     }
 
-    private String extractTitle(Document document) {
-        Element te = document.select(articleSource.getTitleSelector()).get(0);
-        return TextExtractor.extractText(te);
+    private String extractTitle(Document document, String titleSelector) {
+        Element te = document.select(titleSelector).get(0);
+        return HtmlUtils.extractText(te);
     }
 
-    private String extractContent(Document document) {
-        return TextExtractor.extractText(
-                document.select(articleSource.getContentSelector())
-        );
+    private String extractContent(Document document, String contentSelector) {
+        return HtmlUtils.extractText(document.select(contentSelector));
     }
 
     private boolean stringIsEmpty(String string) {

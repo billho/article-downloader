@@ -5,9 +5,9 @@ import org.jsoup.select.Elements;
 
 import java.util.stream.Collectors;
 
-public final class TextExtractor {
+public final class HtmlUtils {
 
-    private TextExtractor() { }
+    private HtmlUtils() { }
 
     public static String extractText(Element element) {
         return element.text()
