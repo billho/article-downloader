@@ -18,7 +18,9 @@ public final class HtmlUtils {
         return elements.stream()
                 .map(Element::text)
                 .collect(Collectors.joining(" "))
-                .replaceAll("[\n\r]", "");
+                .replaceAll("[\n\r]", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
 }
