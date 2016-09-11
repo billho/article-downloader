@@ -25,8 +25,8 @@ public final class GenericArticleDownloader implements ArticleDownloader {
         }
     }
 
-    private Stream<Article> extractFromUrl(String url, ArticleMapping mapping)
-            throws IOException {
+    private Stream<Article> extractFromUrl(String url, ArticleMapping mapping) throws IOException {
+        log.info("Downloading article " + url);
         Document document = Jsoup.connect(url).get();
 
         String title = extractTitle(document, mapping.getTitleSelector());

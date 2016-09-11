@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Stream;
 
 @Component
-public class GenericFeedReader implements FeedReader {
+public final class GenericFeedReader implements FeedReader {
 
     private static final Logger log = LoggerFactory.getLogger(GenericFeedReader.class);
 
@@ -22,7 +22,6 @@ public class GenericFeedReader implements FeedReader {
 
     @Override
     public Stream<String> getArticleUrls(ArticleFeed feed) {
-        String sourceUrl = feed.getUrl();
         ArticleFeed.Type type = feed.getType();
 
         switch (type) {

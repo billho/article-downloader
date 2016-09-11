@@ -32,6 +32,7 @@ public final class RssFeedReader implements FeedReader {
         }
 
         String url = feed.getUrl();
+        log.info("Fetching RSS feed from " + url);
         try {
             URL feedUrl = new URL(url);
             return readFeed(feedUrl);

@@ -2,6 +2,7 @@ package com.guidorota.articledownloader.rest;
 
 import com.guidorota.articledownloader.DownloadService;
 import com.guidorota.articledownloader.entity.Article;
+import com.guidorota.articledownloader.entity.ArticleSource;
 import com.guidorota.articledownloader.rest.entity.ArticleSourceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -23,10 +25,22 @@ public final class ArticleController {
         this.downloadService = downloadService;
     }
 
+    @RequestMapping(path = "/fetch", method = POST)
+    public void fetch(@RequestBody List<ArticleSourceRequest> requests) {
+        List<ArticleSource> sources = requests.stream()
+                .map(ArticleSourceRequest::toArticleSource)
+                .collect(Collectors.toList());
+
+        downloadService.downloadAndStore(sources);
+    }
+
     @RequestMapping(path = "/test", method = POST)
-    public List<Article> test(@RequestBody ArticleSourceRequest
-            request) {
-        return downloadService.run(request.toArticleSource());
+    public List<Article> test(@RequestBody List<ArticleSourceRequest> requests) {
+        List<ArticleSource> sources = requests.stream()
+                .map(ArticleSourceRequest::toArticleSource)
+                .collect(Collectors.toList());
+
+        return downloadService.downloadAndReturn(sources);
     }
 
 }
