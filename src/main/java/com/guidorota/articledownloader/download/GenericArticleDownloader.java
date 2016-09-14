@@ -26,6 +26,7 @@ public final class GenericArticleDownloader implements ArticleDownloader {
             return extractFromUrl(url, mapping);
         } catch (Exception e) {
             log.error("Error downloading the article: " + e.getMessage());
+            e.printStackTrace();
             return Stream.empty();
         }
     }
