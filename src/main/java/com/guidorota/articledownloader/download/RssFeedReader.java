@@ -47,6 +47,7 @@ public final class RssFeedReader implements FeedReader {
 
     private Stream<String> readFeed(URL feedUrl) throws IOException, FeedException {
         SyndFeedInput input = new SyndFeedInput();
+        input.setAllowDoctypes(true);
         SyndFeed feed = input.build(new XmlReader(feedUrl));
 
         return feed.getEntries().stream()
