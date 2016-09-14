@@ -6,6 +6,7 @@ import com.guidorota.articledownloader.html.HtmlUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +26,7 @@ public final class GenericArticleDownloader implements ArticleDownloader {
         try {
             return extractFromUrl(url, mapping);
         } catch (Exception e) {
-            log.error("Error downloading the article: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error downloading the article: " + e.getMessage(), e);
             return Stream.empty();
         }
     }
@@ -56,11 +56,22 @@ public final class GenericArticleDownloader implements ArticleDownloader {
     }
 
     private String extractTitle(Document document, String titleSelector) {
-        Element te = document.select(titleSelector).get(0);
-        return HtmlUtils.extractText(te);
+        Elements es = document.select(titleSelector);
+        if (es.size() == 0) {
+            log.warn("Title element not found");
+            return "";
+        }
+
+        return HtmlUtils.extractText(es.get(0));
     }
 
     private String extractContent(Document document, String contentSelector) {
+        Elements es = document.select(contentSelector);
+        if (es.size() == 0) {
+            log.warn("No content elements found");
+            return "";
+        }
+
         return HtmlUtils.extractText(document.select(contentSelector));
     }
 
