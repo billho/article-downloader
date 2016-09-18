@@ -8,4 +8,6 @@ public interface ArticleRepository {
 
     void storeArticle(Article article);
 
+    long count();
+
 }

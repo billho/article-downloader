@@ -47,4 +47,9 @@ public final class MongoArticleRepository implements ArticleRepository {
         db.getCollection("article").insertOne(bsonArticle);
     }
 
+    @Override
+    public long count() {
+        return db.getCollection("article").count();
+    }
+
 }

@@ -4,6 +4,7 @@ import com.guidorota.articledownloader.entity.ExecutionData;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
@@ -11,7 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class MongoExecutionDataRepository implements ExecutionDataRepository {
+@Component
+public final class MongoExecutionDataRepository implements ExecutionDataRepository {
 
     private final MongoClient client = new MongoClient();
     private final MongoDatabase db = client.getDatabase("article-downloader");
